@@ -1,0 +1,66 @@
+ADPartner/mieD5oJ9Neaf
+
+MySQL:
+   1 create table tab_01  like tab_02;  创建出来的tab_02与tab_01完全一致,分区、索引等信息不会丢失。
+   2 show 命令 : show create table  ...
+   3 存储过程、事件语法
+   4 日期转换为毫秒数 unix_timestamp(date_time) * 1000  毫秒数转换为日期 from_unixtime(time_mills,date_format)
+   5 存储过程中动态执行sql，需要定义预处理 prepare stmt from @prepare_sql; 必须要使用用户变量，就是@开头的。
+   6 日期操作的一些函数 date_format 、date_add 、 date_sub
+   7 游标的循环：
+         declare done int default false;
+         declare cur_name cursor for select field_list from table where ...
+         ##declare continue handler for not found set done = TRUE;
+         declare continue handler for sqlstate '02000' set done = TRUE;
+         open cur_name;
+             loop_name: LOOP
+                  if done then 
+                        leave read_loop;
+                  end if;
+             end LOOP loop_name;
+         close cur_name;
+    8 mysql的 select into    如果into一个已经有值的变量，而且根据where条件没有查到值，则该变量的值不会变成 null  ，如
+       declare t varchar(100); 
+       set t = 'abc';
+       select test.field_1 into t from test where 1 = 2;
+     这时候t的值还是abc
+     select into 如果没有查到值，还会抛出NOT FOUND，干扰到像for not found 这种游标定义。。。
+
+Redis:
+  redis-cli -h 127.0.0.1 -p 6379 连接时指定ip和端口
+  shutdown命令停止reids服务
+  
+  redis.conf中 
+               去掉 bind 不然远程无法访问
+               配置requirepass yourpassword 或者 设置protected-mode为no  不然远程连接时会提示处于保护模式 
+               设置 daemonize yes ，设置后台启动模式
+
+proto-buf:
+  编写 .proto文件 如MyMessage.proto 格式如下:  required 必输  optional 可选  repeated 相当于list 可以0到多个   [defalut = ..] 设置默认值
+             
+       option java_package = "com.hh.proto";
+       option java_outer_classname = "MyMessage";
+       
+       message Body{
+           required string name = 1;
+           optional int32 age = 2;
+           repeated string cards = 3;       
+           
+           enum MyEnum{  //定义枚举
+               ENUM1 = 20;
+               ENUM2 = ....;
+           }
+           
+           message AnotherBean{
+               something .............
+           }
+
+           required AnotherBean anotherBean = 4;
+
+       }
+
+    生成java代码的命令   protoc.exe --java.out  d:\aaa\  MyMessage.proto
+    
+Eclipse:
+   导出jar包 要勾选add directory entries ，这样jar包的结构里面会添加目录信息 spring的component-scan可以扫描到相关组件
+   可以使用 jar tf aaa.jar查看
